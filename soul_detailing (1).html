@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUL DETAILING — Премиальный Детейлинг в СПб | Витебский пр. 1А</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 Pro -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#050608',
+                        cardBg: '#0d0f14',
+                        cardBorder: '#1e222d',
+                        soulRed: '#e11d48',
+                        soulRedHover: '#be123c',
+                        soulAmber: '#f59e0b',
+                        soulDarkGray: '#151821'
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050608;
+            color: #f3f4f6;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Progress beam */
+        #progress-beam {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e11d48, #f59e0b);
+            z-index: 100;
+            width: 0%;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 25s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        /* Glassmorphic elements */
+        .glass-card {
+            background: rgba(13, 15, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050608;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e222d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e11d48;
+        }
+
+        /* Border Beam animation */
+        .border-beam {
+            position: relative;
+        }
+        .border-beam::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(90deg, transparent, #e11d48, transparent);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .border-beam:hover::before {
+            opacity: 1;
+        }
+
+        /* Calendar Styling */
+        .cal-day-disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-200">
+
+    <!-- Scroll Progress Beam -->
+    <div id="progress-beam"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[120] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 glass-card border-b border-gray-800/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo & City Tag -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-soulRed to-red-800 flex items-center justify-center font-extrabold text-white text-xl shadow-lg shadow-soulRed/30 group-hover:scale-105 transition-transform">
+                    S
+                </div>
+                <div>
+                    <div class="text-xl font-extrabold tracking-wider text-white flex items-center gap-1.5">
+                        SOUL <span class="text-soulRed">DETAILING</span>
+                    </div>
+                    <div class="text-[11px] text-gray-400 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-location-dot text-soulRed text-[10px]"></i> СПб • Витебский пр., 1А
+                    </div>
+                </div>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-300">
+                <a href="#services" class="hover:text-soulRed transition-colors">Услуги</a>
+                <a href="#gallery" class="hover:text-soulRed transition-colors">Работы</a>
+                <a href="#calculator" class="hover:text-soulRed transition-colors flex items-center gap-1.5">
+                    Калькулятор 
+                    <span id="nav-calc-badge" class="hidden px-1.5 py-0.5 text-[10px] bg-soulRed text-white rounded-full font-bold">0</span>
+                </a>
+                <a href="#booking" class="hover:text-soulRed transition-colors">Запись онлайн</a>
+                <a href="#contacts" class="hover:text-soulRed transition-colors">Контакты</a>
+            </nav>
+
+            <!-- Actions Buttons -->
+            <div class="hidden sm:flex items-center gap-3">
+                <a href="https://wa.me/79214444178" target="_blank" rel="noopener noreferrer" 
+                   class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all text-sm flex items-center justify-center">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                </a>
+                <a href="tel:+79214444178" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cardBg border border-cardBorder hover:border-soulRed/50 text-white font-semibold text-sm transition-all group">
+                    <i class="fa-solid fa-phone text-soulRed group-hover:rotate-12 transition-transform"></i>
+                    <span>+7 (921) 444-41-78</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-10 pb-20 md:py-24 overflow-hidden">
+        <!-- Glow accents -->
+        <div class="absolute top-1/4 left-10 w-96 h-96 bg-soulRed/15 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-soulAmber/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <!-- Left text content -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-soulRed/10 border border-soulRed/30 text-soulRed text-xs font-bold tracking-wide uppercase">
+                        <span class="w-2 h-2 rounded-full bg-soulRed animate-ping"></span>
+                        Премиальный детейлинг центр в СПб
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
+                        Забота о вашем <br class="hidden sm:inline"/>
+                        <span class="bg-gradient-to-r from-white via-gray-200 to-soulRed bg-clip-text text-transparent">авто и мотоцикле</span> с душой
+                    </h1>
+
+                    <p class="text-gray-400 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
+                        Детейлинг студия полного цикла на Витебском проспекте 1А. Восстановление ЛКП, керамическая защита 9H+, оклейка антигравийной плёнкой SunTek PPF и профессиональный мото-детейлинг.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#calculator" class="px-8 py-4 rounded-xl bg-soulRed hover:bg-soulRedHover text-white font-bold text-base shadow-lg shadow-soulRed/30 hover:shadow-soulRed/50 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            Рассчитать стоимость
+                        </a>
+                        <a href="#services" class="px-8 py-4 rounded-xl bg-cardDark border border-cardBorder hover:border-gray-600 text-white font-bold text-base transition-all flex items-center gap-2">
+                            Наши услуги
+                            <i class="fa-solid fa-arrow-down text-xs text-soulRed"></i>
+                        </a>
+                    </div>
+
+                    <!-- 3 Features Badge -->
+                    <div class="grid grid-cols-3 gap-4 pt-6 border-t border-gray-800/80">
+                        <div>
+                            <div class="text-2xl font-extrabold text-white">100%</div>
+                            <div class="text-xs text-gray-400 mt-1">Контроль качества</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-white">9H+</div>
+                            <div class="text-xs text-gray-400 mt-1">Защита керамикой</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-white">12 мес</div>
+                            <div class="text-xs text-gray-400 mt-1">Гарантия на работы</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right HUD Card -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative rounded-2xl p-2 bg-gradient-to-b from-gray-800 to-cardBg border border-gray-800 shadow-2xl">
+                        <div class="relative h-96 rounded-xl overflow-hidden group">
+                            <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1000&q=80" 
+                                 onerror="this.src='https://placehold.co/800x600/0d0f14/ffffff?text=SOUL+DETAILING'"
+                                 alt="SOUL DETAILING Studio" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent"></div>
+                            
+                            <!-- Badges over photo -->
+                            <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                <span class="px-3 py-1 rounded-md bg-obsidian/80 backdrop-blur-md text-xs font-bold text-emerald-400 border border-emerald-500/30">
+                                    <i class="fa-solid fa-certificate mr-1"></i> SunTek Certified
+                                </span>
+                                <span class="px-3 py-1 rounded-md bg-obsidian/80 backdrop-blur-md text-xs font-bold text-amber-400 border border-amber-500/30">
+                                    <i class="fa-solid fa-flask mr-1"></i> Koch-Chemie Partner
+                                </span>
+                            </div>
+
+                            <!-- Rating badge -->
+                            <div class="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-obsidian/90 backdrop-blur-md border border-gray-800 flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs text-gray-400">Рейтинг Яндекс Карт</div>
+                                    <div class="text-lg font-bold text-white flex items-center gap-2">
+                                        5.0
+                                        <div class="flex text-amber-400 text-xs">
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                            <i class="fa-solid fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="https://yandex.ru/navi/org/soul_deteyling/223894840094?si=x8vxu2teftefuebmb53e79f97c" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg bg-soulRed/20 border border-soulRed/40 text-soulRed text-xs font-bold hover:bg-soulRed hover:text-white transition-all">
+                                    Смотреть отзывы <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[10px]"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- BRANDS TICKER -->
+    <section class="py-6 border-y border-gray-800/80 bg-cardBg/50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 mb-2 text-center text-xs font-bold tracking-widest text-gray-500 uppercase">
+            Используем только мировые бренды автохимии и оборудования
+        </div>
+        <div class="relative w-full overflow-hidden">
+            <div class="animate-marquee whitespace-nowrap flex items-center gap-12 text-gray-400 font-extrabold text-lg sm:text-xl tracking-wider select-none">
+                <span><i class="fa-solid fa-shield-halved text-soulRed mr-2"></i>KOCH-CHEMIE</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-gem text-soulAmber mr-2"></i>GYEON</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-atom text-soulRed mr-2"></i>KRYTEX 9H</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-car-side text-emerald-400 mr-2"></i>SUNTEK PPF</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-rotate text-soulRed mr-2"></i>RUPES BIGFOOT</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-screwdriver-wrench text-gray-300 mr-2"></i>METABO</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-sparkles text-amber-400 mr-2"></i>SONAX</span>
+                <span>•</span>
+                <!-- Repeat for smooth infinite scroll -->
+                <span><i class="fa-solid fa-shield-halved text-soulRed mr-2"></i>KOCH-CHEMIE</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-gem text-soulAmber mr-2"></i>GYEON</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-atom text-soulRed mr-2"></i>KRYTEX 9H</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-car-side text-emerald-400 mr-2"></i>SUNTEK PPF</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-rotate text-soulRed mr-2"></i>RUPES BIGFOOT</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-screwdriver-wrench text-gray-300 mr-2"></i>METABO</span>
+                <span>•</span>
+                <span><i class="fa-solid fa-sparkles text-amber-400 mr-2"></i>SONAX</span>
+                <span>•</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES CATALOG -->
+    <section id="services" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold text-soulRed tracking-widest uppercase mb-2">Услуги студии</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Каталог детейлинг программ</h3>
+                <p class="text-gray-400 mt-3 text-sm sm:text-base">
+                    Выбирайте необходимые услуги. Каждая выбранная позиция автоматически добавляется в интерактивный калькулятор.
+                </p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex flex-wrap items-center justify-center gap-2 mb-10" id="services-tabs">
+                <button onclick="filterServices('all')" class="tab-btn active border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-soulRed text-white border-soulRed" data-tab="all">
+                    Все услуги
+                </button>
+                <button onclick="filterServices('body')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="body">
+                    Кузов
+                </button>
+                <button onclick="filterServices('interior')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="interior">
+                    Салон
+                </button>
+                <button onclick="filterServices('moto')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="moto">
+                    Мотоциклы 🔥
+                </button>
+                <button onclick="filterServices('engine')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="engine">
+                    Подкапотное
+                </button>
+                <button onclick="filterServices('wheels')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="wheels">
+                    Ходовая & Диски
+                </button>
+                <button onclick="filterServices('optics')" class="tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600" data-tab="optics">
+                    Оптика
+                </button>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="services-grid">
+                <!-- Cards render dynamically via JavaScript -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- PORTFOLIO / GALLERY -->
+    <section id="gallery" class="py-20 bg-cardBg/40 border-y border-gray-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <h2 class="text-xs font-extrabold text-soulRed tracking-widest uppercase mb-2">Наши работы</h2>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Портфолио выполненных проектов</h3>
+                </div>
+                <p class="text-gray-400 text-sm max-w-md mt-4 md:mt-0">
+                    Каждая машина и мотоцикл проходят многоэтапную подготовку и проверку под специальным освещением.
+                </p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="group relative rounded-2xl overflow-hidden border border-cardBorder bg-cardBg cursor-pointer" onclick="openLightbox('Audi A3 S-Line — Полировка + Керамика 2 слоя', 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/600x400/0d0f14/ffffff?text=Audi+A3'"
+                             alt="Audi A3" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-4 bg-gradient-to-t from-obsidian to-cardBg">
+                        <span class="text-[11px] font-bold text-soulRed uppercase tracking-wider">Кузов • Керамика</span>
+                        <h4 class="text-lg font-bold text-white mt-1">Audi A3 S-Line</h4>
+                        <p class="text-xs text-gray-400 mt-1">Восстановительная полировка, 2 слоя Krytex 9H</p>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="group relative rounded-2xl overflow-hidden border border-cardBorder bg-cardBg cursor-pointer" onclick="openLightbox('Porsche 718 Cayman — Оклейка SunTek PPF', 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/600x400/0d0f14/ffffff?text=Porsche+718'"
+                             alt="Porsche 718" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-4 bg-gradient-to-t from-obsidian to-cardBg">
+                        <span class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Защита • SunTek PPF</span>
+                        <h4 class="text-lg font-bold text-white mt-1">Porsche 718 Cayman</h4>
+                        <p class="text-xs text-gray-400 mt-1">Полная оклейка передней части глянцевой полиуретановой плёнкой</p>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="group relative rounded-2xl overflow-hidden border border-cardBorder bg-cardBg cursor-pointer" onclick="openLightbox('Mercedes-Benz CLA AMG — Комплексный детейлинг', 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/600x400/0d0f14/ffffff?text=Mercedes+CLA'"
+                             alt="Mercedes CLA" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-4 bg-gradient-to-t from-obsidian to-cardBg">
+                        <span class="text-[11px] font-bold text-soulAmber uppercase tracking-wider">Салон + Кузов</span>
+                        <h4 class="text-lg font-bold text-white mt-1">Mercedes-Benz CLA</h4>
+                        <p class="text-xs text-gray-400 mt-1">Химчистка салона с разбором, озонация и полировка дисков</p>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="group relative rounded-2xl overflow-hidden border border-cardBorder bg-cardBg cursor-pointer" onclick="openLightbox('Custom Red Cruiser — Мото-детейлинг', 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80')">
+                    <div class="h-64 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80" 
+                             onerror="this.src='https://placehold.co/600x400/0d0f14/ffffff?text=Moto+Cruiser'"
+                             alt="Moto Cruiser" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-4 bg-gradient-to-t from-obsidian to-cardBg">
+                        <span class="text-[11px] font-bold text-soulRed uppercase tracking-wider">Мото-детейлинг</span>
+                        <h4 class="text-lg font-bold text-white mt-1">Custom Red Cruiser</h4>
+                        <p class="text-xs text-gray-400 mt-1">Очистка хрома, полировка бака и защита термостойкой керамикой</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CALCULATOR SECTION -->
+    <section id="calculator" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold text-soulRed tracking-widest uppercase mb-2">Онлайн Расчёт</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Интерактивный Калькулятор</h3>
+                <p class="text-gray-400 mt-3 text-sm sm:text-base">
+                    Укажите тип транспортного средства и выберите нужные услуги для автоматического расчета итоговой стоимости со скидкой.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Vehicle Selector & Presets -->
+                <div class="lg:col-span-8 space-y-8">
+                    
+                    <!-- TC selector -->
+                    <div class="p-6 rounded-2xl bg-cardBg border border-cardBorder">
+                        <label class="block text-sm font-extrabold text-white mb-4 uppercase tracking-wider">
+                            1. Выберите тип транспортного средства:
+                        </label>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <button onclick="setVehicleType('moto')" id="vt-moto" class="vt-btn p-4 rounded-xl border text-center transition-all bg-cardBg border-cardBorder text-gray-400 hover:border-soulRed">
+                                <i class="fa-solid fa-motorcycle text-2xl mb-2 block"></i>
+                                <div class="text-xs font-bold">Мотоцикл</div>
+                                <div class="text-[10px] text-gray-500 mt-0.5">Коэф. 0.65</div>
+                            </button>
+                            <button onclick="setVehicleType('sedan')" id="vt-sedan" class="vt-btn active p-4 rounded-xl border text-center transition-all bg-soulRed/10 border-soulRed text-white">
+                                <i class="fa-solid fa-car text-2xl mb-2 block text-soulRed"></i>
+                                <div class="text-xs font-bold">Седан / Купе</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Базовый 1.0</div>
+                            </button>
+                            <button onclick="setVehicleType('crossover')" id="vt-crossover" class="vt-btn p-4 rounded-xl border text-center transition-all bg-cardBg border-cardBorder text-gray-400 hover:border-soulRed">
+                                <i class="fa-solid fa-car-side text-2xl mb-2 block"></i>
+                                <div class="text-xs font-bold">Кроссовер</div>
+                                <div class="text-[10px] text-gray-500 mt-0.5">+15% (1.15)</div>
+                            </button>
+                            <button onclick="setVehicleType('suv')" id="vt-suv" class="vt-btn p-4 rounded-xl border text-center transition-all bg-cardBg border-cardBorder text-gray-400 hover:border-soulRed">
+                                <i class="fa-solid fa-truck-pickup text-2xl mb-2 block"></i>
+                                <div class="text-xs font-bold">Внедорожник</div>
+                                <div class="text-[10px] text-gray-500 mt-0.5">+30% (1.30)</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Presets -->
+                    <div class="p-6 rounded-2xl bg-cardBg border border-cardBorder">
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="text-sm font-extrabold text-white uppercase tracking-wider">
+                                2. Быстрые готовые комплексы:
+                            </label>
+                            <button onclick="resetSelectedServices()" class="text-xs text-soulRed hover:underline font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-rotate-right"></i> Сбросить всё
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="applyPreset('moto')" class="px-4 py-2 rounded-xl bg-obsidian border border-cardBorder hover:border-soulAmber text-xs font-bold text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-motorcycle text-soulAmber"></i> Мото-комплекс
+                            </button>
+                            <button onclick="applyPreset('refresh')" class="px-4 py-2 rounded-xl bg-obsidian border border-cardBorder hover:border-soulRed text-xs font-bold text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-sparkles text-soulRed"></i> Освежить авто (Полировка + Химчистка)
+                            </button>
+                            <button onclick="applyPreset('max')" class="px-4 py-2 rounded-xl bg-obsidian border border-cardBorder hover:border-emerald-500 text-xs font-bold text-gray-300 flex items-center gap-2">
+                                <i class="fa-solid fa-gem text-emerald-400"></i> Максимум блеска 9H + Плёнка
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Selected items list & progress -->
+                    <div class="p-6 rounded-2xl bg-cardBg border border-cardBorder">
+                        <!-- Discount progress bar -->
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs font-bold mb-2">
+                                <span class="text-gray-300">Скидка за объём (от 3-х услуг):</span>
+                                <span id="discount-status-text" class="text-soulAmber">Выберите еще услуги</span>
+                            </div>
+                            <div class="w-full bg-obsidian h-2.5 rounded-full overflow-hidden border border-gray-800">
+                                <div id="discount-progress" class="h-full bg-gradient-to-r from-soulAmber to-emerald-400 transition-all duration-300 w-0"></div>
+                            </div>
+                        </div>
+
+                        <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Выбранные позиций (<span id="calc-count">0</span>):</div>
+                        <div id="calc-items-container" class="space-y-2 min-h-[100px]">
+                            <!-- Items inserted dynamically -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Total Summary Card -->
+                <div class="lg:col-span-4 sticky top-28">
+                    <div class="p-6 rounded-2xl bg-gradient-to-b from-cardBg to-obsidian border border-cardBorder shadow-2xl relative">
+                        <div class="text-xs font-extrabold text-soulRed uppercase tracking-wider mb-2">Итоговая смета</div>
+                        
+                        <div class="space-y-4 my-6 py-4 border-y border-gray-800">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">Тип ТС:</span>
+                                <span id="summary-tc" class="font-bold text-white">Седан / Купе</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">Сумма услуг:</span>
+                                <span id="summary-raw" class="font-bold text-gray-300">0 ₽</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-400">Скидка (10%):</span>
+                                <span id="summary-discount" class="font-bold text-emerald-400">0 ₽</span>
+                            </div>
+                            <div class="pt-2 border-t border-gray-800/60 flex justify-between items-baseline">
+                                <span class="text-base font-extrabold text-white">Итого:</span>
+                                <span id="summary-total" class="text-3xl font-black text-white">0 ₽</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <a href="#booking" onclick="syncCalcToBooking()" class="w-full py-4 rounded-xl bg-soulRed hover:bg-soulRedHover text-white font-bold text-center block shadow-lg shadow-soulRed/30 transition-all">
+                                Перейти к выбору даты <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </a>
+                            <button onclick="sendCalcToWhatsApp()" class="w-full py-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/40 font-bold text-sm transition-all flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                                Записаться через WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BOOKING SECTION (MONTHLY CALENDAR + FORM) -->
+    <section id="booking" class="py-20 bg-cardBg/30 border-t border-gray-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold text-soulRed tracking-widest uppercase mb-2">Онлайн Календарь</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Запись на удобное время</h3>
+                <p class="text-gray-400 mt-3 text-sm sm:text-base">
+                    Выберите день и свободное временное окно. Заявка автоматически передается мастеру студии.
+                </p>
+                <div class="inline-flex items-center gap-2 px-3 py-1 mt-3 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
+                    <i class="fa-solid fa-info-circle"></i> Демо-режим расписания (готов к подключению CRM / Telegram-бота)
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+                
+                <!-- Left: Monthly Calendar -->
+                <div class="lg:col-span-7 p-6 rounded-2xl bg-cardBg border border-cardBorder">
+                    
+                    <!-- Calendar Navigation -->
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-800">
+                        <button onclick="changeMonth(-1)" class="p-2 rounded-lg bg-obsidian hover:bg-gray-800 text-white transition-colors">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <h4 id="cal-month-year" class="text-lg font-bold text-white capitalize">Ноябрь 2026</h4>
+                        <button onclick="changeMonth(1)" class="p-2 rounded-lg bg-obsidian hover:bg-gray-800 text-white transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Days of week -->
+                    <div class="grid grid-cols-7 text-center text-xs font-extrabold text-gray-500 mb-2">
+                        <div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВC</div>
+                    </div>
+
+                    <!-- Days Grid -->
+                    <div id="cal-days-grid" class="grid grid-cols-7 gap-2">
+                        <!-- Grid rendered dynamically -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="flex flex-wrap items-center justify-center gap-4 mt-6 pt-4 border-t border-gray-800 text-xs text-gray-400">
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Много мест</div>
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Мало мест</div>
+                        <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Занято</div>
+                    </div>
+
+                    <!-- Time Slots Block (Shown when date selected) -->
+                    <div id="time-slots-container" class="mt-6 p-4 rounded-xl bg-obsidian border border-gray-800 hidden">
+                        <div class="text-xs font-bold text-white uppercase mb-3 flex items-center justify-between">
+                            <span>Свободные окна на <span id="selected-date-str" class="text-soulRed"></span>:</span>
+                            <span class="text-[10px] text-gray-400">Выберите время</span>
+                        </div>
+                        <div id="time-slots-grid" class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                            <!-- Slots rendered via JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: Booking Form -->
+                <div class="lg:col-span-5 p-6 rounded-2xl bg-cardBg border border-cardBorder">
+                    <h4 class="text-lg font-extrabold text-white mb-4">Данные для записи</h4>
+                    
+                    <form id="booking-form" onsubmit="handleBookingSubmit(event)" class="space-y-4">
+                        
+                        <!-- Auto-selected Info Card -->
+                        <div class="p-3.5 rounded-xl bg-obsidian border border-gray-800 text-xs space-y-1.5">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Дата и время:</span>
+                                <span id="form-datetime-display" class="font-bold text-soulAmber">Не выбрано</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Услуг в заявке:</span>
+                                <span id="form-services-count" class="font-bold text-white">0</span>
+                            </div>
+                            <div class="flex justify-between border-t border-gray-800 pt-1.5">
+                                <span class="text-gray-400">Предварительно:</span>
+                                <span id="form-total-price" class="font-bold text-emerald-400">0 ₽</span>
+                            </div>
+                        </div>
+
+                        <!-- Quick Service Selector if calc is empty -->
+                        <div id="quick-service-chips" class="text-xs">
+                            <label class="block text-gray-400 font-semibold mb-2">Быстрый выбор популярной услуги:</label>
+                            <div class="flex flex-wrap gap-1.5">
+                                <button type="button" onclick="quickSelectService('p1')" class="px-2.5 py-1 rounded-md bg-obsidian hover:bg-gray-800 text-gray-300 border border-gray-800">Полировка</button>
+                                <button type="button" onclick="quickSelectService('p2')" class="px-2.5 py-1 rounded-md bg-obsidian hover:bg-gray-800 text-gray-300 border border-gray-800">Керамика 9H</button>
+                                <button type="button" onclick="quickSelectService('p5')" class="px-2.5 py-1 rounded-md bg-obsidian hover:bg-gray-800 text-gray-300 border border-gray-800">Химчистка</button>
+                                <button type="button" onclick="quickSelectService('p8')" class="px-2.5 py-1 rounded-md bg-obsidian hover:bg-gray-800 text-gray-300 border border-gray-800">Мото-Комплекс</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">Ваше Имя *</label>
+                            <input type="text" id="cust-name" required placeholder="Александр" 
+                                   class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gray-800 text-white text-sm focus:outline-none focus:border-soulRed transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">Телефон *</label>
+                            <input type="tel" id="cust-phone" required placeholder="+7 (921) 000-00-00" 
+                                   class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gray-800 text-white text-sm focus:outline-none focus:border-soulRed transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">Марка и модель ТС *</label>
+                            <input type="text" id="cust-car" required placeholder="BMW X5 M / Ducati Panigale" 
+                                   class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gray-800 text-white text-sm focus:outline-none focus:border-soulRed transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">Предпочтительный способ связи</label>
+                            <select id="cust-contact" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gray-800 text-white text-sm focus:outline-none focus:border-soulRed transition-all">
+                                <option value="WhatsApp">WhatsApp (быстрый ответ)</option>
+                                <option value="Telegram">Telegram</option>
+                                <option value="Звонок">Звонок по телефону</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-300 mb-1">Комментарий к заявке</label>
+                            <textarea id="cust-comment" rows="2" placeholder="Пожелания, особые отметки по состоянию ЛКП..." 
+                                      class="w-full px-4 py-3 rounded-xl bg-obsidian border border-gray-800 text-white text-sm focus:outline-none focus:border-soulRed transition-all"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full py-4 rounded-xl bg-soulRed hover:bg-soulRedHover text-white font-bold text-sm shadow-lg shadow-soulRed/30 transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Забронировать время
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACTS & DIRECT YANDEX MAPS SECTION -->
+    <section id="contacts" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-xs font-extrabold text-soulRed tracking-widest uppercase mb-2">Контакты & Навигация</h2>
+                <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Ждём вас в SOUL DETAILING</h3>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+                
+                <!-- Left info block -->
+                <div class="lg:col-span-5 p-8 rounded-2xl bg-cardBg border border-cardBorder flex flex-col justify-between space-y-6">
+                    <div class="space-y-6">
+                        
+                        <!-- Address -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-soulRed/10 border border-soulRed/30 flex items-center justify-center text-soulRed text-xl shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-gray-400 uppercase">Адрес студии:</div>
+                                <div class="text-base font-extrabold text-white mt-1">г. Санкт-Петербург, Витебский проспект, д. 1А</div>
+                                <button onclick="copyAddress()" class="mt-2 px-3 py-1 rounded-md bg-obsidian hover:bg-gray-800 border border-gray-800 text-xs font-bold text-soulAmber transition-all flex items-center gap-1.5">
+                                    <i class="fa-solid fa-copy"></i> Скопировать адрес
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Phone & Work Hours -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-soulRed/10 border border-soulRed/30 flex items-center justify-center text-soulRed text-xl shrink-0">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-gray-400 uppercase">Телефон & График:</div>
+                                <a href="tel:+79214444178" class="text-lg font-black text-white hover:text-soulRed transition-colors block mt-0.5">
+                                    +7 (921) 444-41-78
+                                </a>
+                                <div class="text-xs text-gray-400 mt-1">Пн–Вс: 10:00 – 21:00 (по предварительной записи)</div>
+                            </div>
+                        </div>
+
+                        <!-- Rating Badge -->
+                        <div class="p-4 rounded-xl bg-obsidian border border-gray-800 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="text-3xl font-black text-white">5.0</div>
+                                <div>
+                                    <div class="flex text-amber-400 text-xs">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <div class="text-[11px] text-gray-400 mt-0.5">Яндекс Карты</div>
+                                </div>
+                            </div>
+                            <a href="https://yandex.ru/navi/org/soul_deteyling/223894840094?si=x8vxu2teftefuebmb53e79f97c" target="_blank" rel="noopener noreferrer" class="text-xs text-soulRed hover:underline font-bold">
+                                Отзывы →
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <!-- Big Yandex Nav button -->
+                    <div>
+                        <a href="https://yandex.ru/navi/org/soul_deteyling/223894840094?si=x8vxu2teftefuebmb53e79f97c" 
+                           target="_blank" rel="noopener noreferrer" 
+                           class="w-full py-4 rounded-xl bg-amber-500 hover:bg-amber-600 text-black font-extrabold text-center block shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5">
+                            <i class="fa-solid fa-route mr-2"></i>
+                            Открыть в Яндекс Картах / Навигаторе
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Direct Yandex Map Embed -->
+                <div class="lg:col-span-7 rounded-2xl overflow-hidden border border-cardBorder min-h-[400px] relative">
+                    <iframe src="https://yandex.ru/map-widget/v1/?ll=30.344000%2C59.875000&mode=poi&poi%5Bpoint%5D=30.344000%2C59.875000&poi%5Buri%5D=ymapsbm1%3A%2F%2Forg%3Foid%3D223894840094&z=16" 
+                            width="100%" height="100%" frameborder="0" allowfullscreen="true" 
+                            style="position:relative; min-height: 400px; width:100%; height:100%; border:0;"></iframe>
+                    
+                    <!-- Overlay link bar at bottom of map -->
+                    <div class="absolute bottom-4 left-4 right-4 p-3 rounded-xl bg-obsidian/90 backdrop-blur-md border border-gray-800 flex items-center justify-between pointer-events-auto">
+                        <div class="text-xs font-semibold text-gray-300">
+                            <i class="fa-solid fa-location-dot text-soulRed mr-1"></i> SOUL DETAILING • Витебский пр. 1А
+                        </div>
+                        <a href="https://yandex.ru/navi/org/soul_deteyling/223894840094?si=x8vxu2teftefuebmb53e79f97c" 
+                           target="_blank" rel="noopener noreferrer" 
+                           class="px-3 py-1.5 rounded-lg bg-soulRed text-white text-xs font-bold hover:bg-soulRedHover transition-all flex items-center gap-1">
+                            Навигатор <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-10 border-t border-gray-800 bg-obsidian">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs text-gray-500">
+                © 2026 SOUL DETAILING. Все права защищены. Санкт-Петербург, Витебский проспект 1А.
+            </div>
+            <div class="flex items-center gap-4 text-xs text-gray-400">
+                <a href="tel:+79214444178" class="hover:text-soulRed transition-colors">+7 (921) 444-41-78</a>
+                <span>•</span>
+                <a href="https://wa.me/79214444178" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition-colors">WhatsApp</a>
+                <span>•</span>
+                <a href="https://yandex.ru/navi/org/soul_deteyling/223894840094?si=x8vxu2teftefuebmb53e79f97c" target="_blank" rel="noopener noreferrer" class="hover:text-amber-400 transition-colors">Яндекс Карты</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MOBILE BOTTOM BAR -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 z-50 glass-card border-t border-gray-800 px-4 py-2">
+        <div class="grid grid-cols-5 text-center text-[10px] font-bold text-gray-400">
+            <a href="#services" class="flex flex-col items-center py-1 hover:text-soulRed">
+                <i class="fa-solid fa-list-check text-base mb-1"></i>
+                Услуги
+            </a>
+            <a href="#gallery" class="flex flex-col items-center py-1 hover:text-soulRed">
+                <i class="fa-solid fa-images text-base mb-1"></i>
+                Работы
+            </a>
+            <a href="#calculator" class="flex flex-col items-center py-1 text-soulRed relative">
+                <i class="fa-solid fa-calculator text-base mb-1"></i>
+                Расчёт
+                <span id="mob-calc-badge" class="hidden absolute top-0 right-2 w-4 h-4 bg-soulRed text-white rounded-full text-[9px] flex items-center justify-center font-bold">0</span>
+            </a>
+            <a href="#booking" class="flex flex-col items-center py-1 hover:text-soulRed">
+                <i class="fa-solid fa-calendar-check text-base mb-1"></i>
+                Запись
+            </a>
+            <a href="https://wa.me/79214444178" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center py-1 text-emerald-400">
+                <i class="fa-brands fa-whatsapp text-base mb-1"></i>
+                WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative max-w-4xl w-full bg-cardBg rounded-2xl overflow-hidden border border-gray-800">
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-obsidian/80 text-white hover:bg-soulRed transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="h-[60vh] sm:h-[70vh]">
+                <img id="lightbox-img" src="" alt="Work details" class="w-full h-full object-contain bg-black">
+            </div>
+            <div class="p-4 bg-obsidian border-t border-gray-800">
+                <h4 id="lightbox-title" class="text-base font-bold text-white"></h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOOKING CONFIRMATION TICKET MODAL -->
+    <div id="ticket-modal" class="fixed inset-0 z-[150] bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="relative max-w-md w-full bg-cardBg rounded-2xl p-6 border border-cardBorder shadow-2xl space-y-4">
+            <button onclick="closeTicketModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="text-center">
+                <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-2xl mb-2">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-white">Талон записи сформирован</h3>
+                <p class="text-xs text-gray-400 mt-1">№ заявки: <span id="ticket-id" class="text-soulRed font-bold">#SOUL-8492</span></p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-obsidian border border-gray-800 text-xs space-y-2">
+                <div class="flex justify-between"><span class="text-gray-400">Клиент:</span> <span id="ticket-name" class="font-bold text-white"></span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Авто / Мото:</span> <span id="ticket-car" class="font-bold text-white"></span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Дата и время:</span> <span id="ticket-datetime" class="font-bold text-soulAmber"></span></div>
+                <div class="flex justify-between"><span class="text-gray-400">Итого со скидкой:</span> <span id="ticket-price" class="font-bold text-emerald-400"></span></div>
+            </div>
+
+            <p class="text-[11px] text-gray-400 text-center">
+                Для мгновенного подтверждения мы сформировали сообщение. Нажмите кнопку ниже для отправки мастеру.
+            </p>
+
+            <button onclick="confirmTicketWhatsApp()" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-2">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                Подтвердить в WhatsApp
+            </button>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- SERVICES DATA ---
+        const servicesData = [
+            { id: 'p1', cat: 'body', title: 'Детейлинг полировка ЛКП', desc: 'Устранение 90%+ царапин, голограмм и риска. Глубокий блеск.', price: 18000, icon: 'fa-car-burst' },
+            { id: 'p2', cat: 'body', title: 'Керамика Krytex 9H (2 слоя)', desc: 'Гидрофоб, защита от реагентов, выгорания и птичьего помёта.', price: 22000, icon: 'fa-shield-halved' },
+            { id: 'p3', cat: 'body', title: 'Антигравийная плёнка SunTek PPF (Перед)', desc: 'Защита капота, бампера, фар и зеркал от сколов и гравия.', price: 65000, icon: 'fa-layer-group' },
+            { id: 'p4', cat: 'body', title: 'Антидождь на все стёкла', desc: 'Улучшает видимость в дождь, соскальзывание капель на скорости 60+ км/ч.', price: 4500, icon: 'fa-cloud-showers-heavy' },
+
+            { id: 'p5', cat: 'interior', title: 'Химчистка салона с разбором', desc: 'Глубокая очистка сидений, ковра, потолка, багажника и щелей.', price: 16000, icon: 'fa-soap' },
+            { id: 'p6', cat: 'interior', title: 'Озонация & Дезинфекция', desc: 'Полная нейтрализация неприятных запахов и бактерий в кондиционере.', price: 3000, icon: 'fa-wind' },
+            { id: 'p7', cat: 'interior', title: 'Защитный состав для кожи и пластика', desc: 'Консервация от протёртостей, джинсового крашения и выгорания.', price: 7000, icon: 'fa-couch' },
+
+            { id: 'p8', cat: 'moto', title: 'Мото-детейлинг Комплекс', desc: 'Бесконтактная и ручная мойка, очистка труднодоступных узлов.', price: 8000, icon: 'fa-motorcycle' },
+            { id: 'p9', cat: 'moto', title: 'Керамика для мотоцикла', desc: 'Термостойкое керамическое покрытие бака, пластика и выхлопа.', price: 12000, icon: 'fa-fire' },
+            { id: 'p10', cat: 'moto', title: 'Оклейка бензобака плёнкой', desc: 'Защита от царапин коленями и экипировкой.', price: 9000, icon: 'fa-shield' },
+
+            { id: 'p11', cat: 'engine', title: 'Паровая мойка ДВС с консервацией', desc: 'Безопасная очистка двигателя паром и нанесение диэлектрического состава.', price: 6000, icon: 'fa-gears' },
+            { id: 'p12', cat: 'wheels', title: 'Очистка и керамика дисков', desc: 'Снятие нагара колодок, битума и покрытие термокерамикой.', price: 9000, icon: 'fa-circle-notch' },
+            { id: 'p13', cat: 'optics', title: 'Полировка и бронирование фар', desc: 'Восстановление прозрачности и оклейка полиуретаном SunTek.', price: 7000, icon: 'fa-lightbulb' }
+        ];
+
+        // --- APP STATE ---
+        let selectedVehicle = 'sedan'; // moto, sedan, crossover, suv
+        const vehicleMultipliers = { moto: 0.65, sedan: 1.0, crossover: 1.15, suv: 1.30 };
+        const selectedServices = new Set();
+        
+        let currentCalDate = new Date(2026, 10, 1); // November 2026 default
+        let selectedBookingDate = null;
+        let selectedBookingTime = null;
+        let lastCreatedTicket = null;
+
+        // --- INIT ON LOAD ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderServicesGrid('all');
+            renderCalculator();
+            renderCalendar();
+            setupScrollBeam();
+        });
+
+        // --- PROGRESS BEAM ---
+        function setupScrollBeam() {
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById('progress-beam').style.width = scrolled + '%';
+            });
+        }
+
+        // --- RENDER SERVICES ---
+        function renderServicesGrid(filterCat) {
+            const container = document.getElementById('services-grid');
+            container.innerHTML = '';
+
+            const filtered = filterCat === 'all' ? servicesData : servicesData.filter(s => s.cat === filterCat);
+
+            filtered.forEach(service => {
+                const isSelected = selectedServices.has(service.id);
+                const card = document.createElement('div');
+                card.className = `p-6 rounded-2xl bg-cardBg border ${isSelected ? 'border-soulRed shadow-lg shadow-soulRed/10' : 'border-cardBorder'} hover:border-gray-600 transition-all flex flex-col justify-between group`;
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-obsidian border border-gray-800 flex items-center justify-center text-soulRed text-xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid ${service.icon}"></i>
+                            </div>
+                            <span class="text-xs font-bold text-gray-400 bg-obsidian px-2.5 py-1 rounded-md border border-gray-800">
+                                от ${service.price.toLocaleString('ru-RU')} ₽
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white mb-2">${service.title}</h4>
+                        <p class="text-xs text-gray-400 leading-relaxed mb-6">${service.desc}</p>
+                    </div>
+                    <button onclick="toggleService('${service.id}')" 
+                            class="w-full py-3 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 ${isSelected ? 'bg-soulRed text-white' : 'bg-obsidian hover:bg-gray-800 text-gray-300 border border-gray-800'}">
+                        <i class="fa-solid ${isSelected ? 'fa-check' : 'fa-plus'}"></i>
+                        <span>${isSelected ? 'В расчёте' : '+ В расчёт'}</span>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterServices(cat) {
+            document.querySelectorAll('#services-tabs .tab-btn').forEach(btn => {
+                if(btn.getAttribute('data-tab') === cat) {
+                    btn.className = 'tab-btn active border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-soulRed text-white border-soulRed';
+                } else {
+                    btn.className = 'tab-btn border px-5 py-2.5 rounded-xl text-sm font-bold transition-all bg-cardBg text-gray-400 border-cardBorder hover:border-gray-600';
+                }
+            });
+            renderServicesGrid(cat);
+        }
+
+        // --- CALCULATOR ENGINE ---
+        function setVehicleType(type) {
+            selectedVehicle = type;
+            document.querySelectorAll('.vt-btn').forEach(btn => {
+                btn.className = 'vt-btn p-4 rounded-xl border text-center transition-all bg-cardBg border-cardBorder text-gray-400 hover:border-soulRed';
+            });
+            const activeBtn = document.getElementById(`vt-${type}`);
+            if(activeBtn) {
+                activeBtn.className = 'vt-btn active p-4 rounded-xl border text-center transition-all bg-soulRed/10 border-soulRed text-white';
+            }
+            renderCalculator();
+        }
+
+        function toggleService(id) {
+            if(selectedServices.has(id)) {
+                selectedServices.delete(id);
+                showToast('Услуга удалена из расчёта', 'info');
+            } else {
+                selectedServices.add(id);
+                showToast('Услуга добавлена в расчёт', 'success');
+            }
+            renderServicesGrid(getCurrentActiveTab());
+            renderCalculator();
+        }
+
+        function getCurrentActiveTab() {
+            const active = document.querySelector('#services-tabs .tab-btn.active');
+            return active ? active.getAttribute('data-tab') : 'all';
+        }
+
+        function resetSelectedServices() {
+            selectedServices.clear();
+            renderServicesGrid(getCurrentActiveTab());
+            renderCalculator();
+            showToast('Расчёт сброшен', 'info');
+        }
+
+        function applyPreset(presetType) {
+            selectedServices.clear();
+            if(presetType === 'moto') {
+                selectedVehicle = 'moto';
+                selectedServices.add('p8');
+                selectedServices.add('p9');
+            } else if(presetType === 'refresh') {
+                selectedServices.add('p1');
+                selectedServices.add('p5');
+                selectedServices.add('p4');
+            } else if(presetType === 'max') {
+                selectedServices.add('p1');
+                selectedServices.add('p2');
+                selectedServices.add('p3');
+                selectedServices.add('p12');
+            }
+            setVehicleType(selectedVehicle);
+            renderServicesGrid(getCurrentActiveTab());
+            showToast('Пресет применён!', 'success');
+        }
+
+        function renderCalculator() {
+            const mult = vehicleMultipliers[selectedVehicle] || 1.0;
+            const container = document.getElementById('calc-items-container');
+            container.innerHTML = '';
+
+            let rawSum = 0;
+
+            if(selectedServices.size === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 text-xs text-gray-500">
+                        <i class="fa-solid fa-basket-shopping text-2xl mb-2 block opacity-40"></i>
+                        Выберите услуги в каталоге выше или выберите готовый комплекс
+                    </div>
+                `;
+            } else {
+                selectedServices.forEach(id => {
+                    const item = servicesData.find(s => s.id === id);
+                    if(item) {
+                        const itemPrice = Math.round(item.price * mult);
+                        rawSum += itemPrice;
+
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center justify-between p-3 rounded-xl bg-obsidian border border-gray-800 text-xs';
+                        row.innerHTML = `
+                            <span class="font-bold text-white">${item.title}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold text-gray-300">${itemPrice.toLocaleString('ru-RU')} ₽</span>
+                                <button onclick="toggleService('${item.id}')" class="text-gray-500 hover:text-soulRed">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    }
+                });
+            }
+
+            // Discount progress
+            const count = selectedServices.size;
+            const discountPercent = count >= 3 ? 0.10 : 0.0;
+            const discountAmount = Math.round(rawSum * discountPercent);
+            const totalSum = rawSum - discountAmount;
+
+            const progressBar = document.getElementById('discount-progress');
+            const progressText = document.getElementById('discount-status-text');
+
+            if(count === 0) {
+                progressBar.style.width = '0%';
+                progressText.innerText = 'Выберите 3 услуги для скидки 10%';
+                progressText.className = 'text-gray-400';
+            } else if(count < 3) {
+                const pct = (count / 3) * 100;
+                progressBar.style.width = pct + '%';
+                progressText.innerText = `Еще ${3 - count} услаг(и) до скидки 10%`;
+                progressText.className = 'text-soulAmber';
+            } else {
+                progressBar.style.width = '100%';
+                progressText.innerText = 'Скидка 10% активирована! 🎉';
+                progressText.className = 'text-emerald-400 font-extrabold';
+            }
+
+            // Update Summaries
+            const vehicleNames = { moto: 'Мотоцикл', sedan: 'Седан / Купе', crossover: 'Кроссовер', suv: 'Внедорожник' };
+            document.getElementById('summary-tc').innerText = vehicleNames[selectedVehicle];
+            document.getElementById('summary-raw').innerText = `${rawSum.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('summary-discount').innerText = `-${discountAmount.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('summary-total').innerText = `${totalSum.toLocaleString('ru-RU')} ₽`;
+            document.getElementById('calc-count').innerText = count;
+
+            // Header & Mobile badges
+            const badges = [document.getElementById('nav-calc-badge'), document.getElementById('mob-calc-badge')];
+            badges.forEach(b => {
+                if(b) {
+                    if(count > 0) {
+                        b.innerText = count;
+                        b.classList.remove('hidden');
+                    } else {
+                        b.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Update form display if already syncing
+            updateFormSummary(totalSum);
+        }
+
+        // --- MONTHLY CALENDAR ENGINE ---
+        function renderCalendar() {
+            const year = currentCalDate.getFullYear();
+            const month = currentCalDate.getMonth();
+            
+            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+            document.getElementById('cal-month-year').innerText = `${monthNames[month]} ${year}`;
+
+            const daysGrid = document.getElementById('cal-days-grid');
+            daysGrid.innerHTML = '';
+
+            const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7; // Monday start
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Empty slots before month start
+            for(let i = 0; i < firstDayIndex; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'h-10 sm:h-12';
+                daysGrid.appendChild(empty);
+            }
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            for(let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const isPast = dateObj < today;
+
+                const dayCard = document.createElement('button');
+                dayCard.type = 'button';
+
+                // Status logic (Demo mock)
+                let statusColor = 'bg-emerald-500';
+                if(d % 4 === 0) statusColor = 'bg-amber-500';
+                if(d % 7 === 0 || d === 15) statusColor = 'bg-red-500';
+
+                const dateStr = `${d < 10 ? '0'+d : d}.${month + 1 < 10 ? '0'+(month+1) : month+1}.${year}`;
+                const isSelected = selectedBookingDate === dateStr;
+
+                if(isPast) {
+                    dayCard.className = 'h-10 sm:h-12 rounded-xl bg-obsidian/40 border border-transparent text-gray-600 flex flex-col items-center justify-center text-xs cal-day-disabled';
+                    dayCard.disabled = true;
+                    dayCard.innerHTML = `<span>${d}</span>`;
+                } else if(statusColor === 'bg-red-500') {
+                    dayCard.className = 'h-10 sm:h-12 rounded-xl bg-obsidian border border-gray-800/50 text-gray-500 flex flex-col items-center justify-center text-xs cursor-not-allowed relative opacity-60';
+                    dayCard.innerHTML = `
+                        <span class="font-bold">${d}</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1"></span>
+                    `;
+                } else {
+                    dayCard.className = `h-10 sm:h-12 rounded-xl border flex flex-col items-center justify-center text-xs font-bold transition-all ${isSelected ? 'bg-soulRed text-white border-soulRed shadow-lg shadow-soulRed/30' : 'bg-obsidian border-gray-800 text-gray-200 hover:border-soulRed'}`;
+                    dayCard.onclick = () => selectCalDate(dateStr);
+                    dayCard.innerHTML = `
+                        <span>${d}</span>
+                        <span class="w-1.5 h-1.5 rounded-full ${statusColor} mt-1"></span>
+                    `;
+                }
+                daysGrid.appendChild(dayCard);
+            }
+        }
+
+        function changeMonth(delta) {
+            currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function selectCalDate(dateStr) {
+            selectedBookingDate = dateStr;
+            document.getElementById('selected-date-str').innerText = dateStr;
+            renderCalendar();
+            renderTimeSlots();
+            document.getElementById('time-slots-container').classList.remove('hidden');
+        }
+
+        function renderTimeSlots() {
+            const slotsContainer = document.getElementById('time-slots-grid');
+            slotsContainer.innerHTML = '';
+
+            const availableSlots = ['10:00', '12:00', '14:00', '16:00', '18:00', '19:30'];
+            availableSlots.forEach((time, index) => {
+                const isBusy = index === 2; // Demo slot 14:00 busy
+                const isSelected = selectedBookingTime === time;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                
+                if(isBusy) {
+                    btn.className = 'py-2 rounded-lg bg-red-950/30 border border-red-900/40 text-red-400 text-xs font-bold cursor-not-allowed opacity-50';
+                    btn.innerText = `${time} (Занято)`;
+                    btn.disabled = true;
+                } else {
+                    btn.className = `py-2 rounded-lg border text-xs font-bold transition-all ${isSelected ? 'bg-soulRed text-white border-soulRed' : 'bg-cardBg border-gray-800 text-gray-300 hover:border-soulRed'}`;
+                    btn.innerText = time;
+                    btn.onclick = () => {
+                        selectedBookingTime = time;
+                        renderTimeSlots();
+                        updateFormSummary();
+                    };
+                }
+                slotsContainer.appendChild(btn);
+            });
+        }
+
+        // --- BOOKING FORM SYNC & SUBMIT ---
+        function updateFormSummary(overrideSum = null) {
+            const dtDisplay = document.getElementById('form-datetime-display');
+            if(selectedBookingDate && selectedBookingTime) {
+                dtDisplay.innerText = `${selectedBookingDate} в ${selectedBookingTime}`;
+                dtDisplay.className = 'font-bold text-soulAmber';
+            } else if(selectedBookingDate) {
+                dtDisplay.innerText = `${selectedBookingDate} (Время не выбрано)`;
+            } else {
+                dtDisplay.innerText = 'Не выбрано';
+            }
+
+            document.getElementById('form-services-count').innerText = selectedServices.size;
+
+            let total = overrideSum;
+            if(total === null) {
+                const mult = vehicleMultipliers[selectedVehicle] || 1.0;
+                let rawSum = 0;
+                selectedServices.forEach(id => {
+                    const item = servicesData.find(s => s.id === id);
+                    if(item) rawSum += Math.round(item.price * mult);
+                });
+                const disc = selectedServices.size >= 3 ? 0.10 : 0.0;
+                total = rawSum - Math.round(rawSum * disc);
+            }
+            document.getElementById('form-total-price').innerText = `${total.toLocaleString('ru-RU')} ₽`;
+        }
+
+        function quickSelectService(id) {
+            selectedServices.add(id);
+            renderServicesGrid(getCurrentActiveTab());
+            renderCalculator();
+            showToast('Услуга добавлена к записи', 'success');
+        }
+
+        function syncCalcToBooking() {
+            updateFormSummary();
+            showToast('Данные калькулятора переданы в форму записи', 'info');
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            
+            if(!selectedBookingDate || !selectedBookingTime) {
+                showToast('Пожалуйста, выберите дату и время в календаре!', 'error');
+                return;
+            }
+
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const car = document.getElementById('cust-car').value;
+            const ticketId = '#SOUL-' + Math.floor(1000 + Math.random() * 9000);
+
+            const mult = vehicleMultipliers[selectedVehicle] || 1.0;
+            let rawSum = 0;
+            selectedServices.forEach(id => {
+                const item = servicesData.find(s => s.id === id);
+                if(item) rawSum += Math.round(item.price * mult);
+            });
+            const disc = selectedServices.size >= 3 ? 0.10 : 0.0;
+            const total = rawSum - Math.round(rawSum * disc);
+
+            lastCreatedTicket = {
+                ticketId,
+                name,
+                phone,
+                car,
+                date: selectedBookingDate,
+                time: selectedBookingTime,
+                total: `${total.toLocaleString('ru-RU')} ₽`,
+                servicesCount: selectedServices.size
+            };
+
+            document.getElementById('ticket-id').innerText = ticketId;
+            document.getElementById('ticket-name').innerText = name;
+            document.getElementById('ticket-car').innerText = car;
+            document.getElementById('ticket-datetime').innerText = `${selectedBookingDate} в ${selectedBookingTime}`;
+            document.getElementById('ticket-price').innerText = `${total.toLocaleString('ru-RU')} ₽`;
+
+            document.getElementById('ticket-modal').classList.remove('hidden');
+        }
+
+        function closeTicketModal() {
+            document.getElementById('ticket-modal').classList.add('hidden');
+        }
+
+        function confirmTicketWhatsApp() {
+            if(!lastCreatedTicket) return;
+            const msg = `Здравствуйте! Заявка ${lastCreatedTicket.ticketId} на детейлинг.\nИмя: ${lastCreatedTicket.name}\nАвто/Мото: ${lastCreatedTicket.car}\nДата/Время: ${lastCreatedTicket.date} в ${lastCreatedTicket.time}\nУслуг: ${lastCreatedTicket.servicesCount}\nСумма: ${lastCreatedTicket.total}`;
+            window.open(`https://wa.me/79214444178?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function sendCalcToWhatsApp() {
+            const mult = vehicleMultipliers[selectedVehicle] || 1.0;
+            let rawSum = 0;
+            let itemList = [];
+            selectedServices.forEach(id => {
+                const item = servicesData.find(s => s.id === id);
+                if(item) {
+                    const pr = Math.round(item.price * mult);
+                    rawSum += pr;
+                    itemList.push(`- ${item.title} (${pr.toLocaleString('ru-RU')} ₽)`);
+                }
+            });
+            const disc = selectedServices.size >= 3 ? 0.10 : 0.0;
+            const total = rawSum - Math.round(rawSum * disc);
+
+            const msg = `Здравствуйте! Хочу записаться в SOUL DETAILING.\nТип ТС: ${selectedVehicle}\nУслуги:\n${itemList.join('\n')}\nИтоговая сумма: ${total.toLocaleString('ru-RU')} ₽`;
+            window.open(`https://wa.me/79214444178?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // --- UTILS & TOASTS ---
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let bgClass = 'bg-cardBg border-soulRed text-white';
+            let icon = 'fa-circle-info text-soulRed';
+
+            if(type === 'success') {
+                bgClass = 'bg-cardBg border-emerald-500 text-white';
+                icon = 'fa-circle-check text-emerald-400';
+            } else if(type === 'error') {
+                bgClass = 'bg-cardBg border-red-500 text-white';
+                icon = 'fa-triangle-exclamation text-red-400';
+            }
+
+            toast.className = `px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-3 text-xs font-bold transition-all duration-300 transform translate-y-[-10px] opacity-0 ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-[-10px]', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function copyAddress() {
+            const addr = "г. Санкт-Петербург, Витебский проспект, д. 1А";
+            const tempInput = document.createElement('input');
+            tempInput.value = addr;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Адрес скопирован в буфер обмена!', 'success');
+        }
+
+        function openLightbox(title, imgUrl) {
+            document.getElementById('lightbox-title').innerText = title;
+            document.getElementById('lightbox-img').src = imgUrl;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
